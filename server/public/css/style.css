@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun:wght@400;500;700&display=swap');
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Reem Kufi Fun', sans-serif;
+  background-color: #000000;
+  color: #ffffff;
+
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+}

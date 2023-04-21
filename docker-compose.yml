@@ -1,0 +1,57 @@
+services:
+  traefik:
+    image: traefik:2.9
+    restart: unless-stopped
+    command:
+      - --api.dashboard=true
+      - --entrypoints.http.address=:80
+      - --providers.docker
+      - --providers.docker.network=${COMPOSE_PROJECT_NAME}_client
+      - --providers.docker.watch=true
+      - --providers.docker.exposedbydefault=false
+    ports:
+      - ${PORT:-80}:80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DOMAIN}`)
+      - traefik.http.routers.traefik.service=api@internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  mongodb:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - ${MONGODB_PORT:-27017}:27017
+    volumes:
+      - data:/data/db
+  server:
+    image: node:18-alpine
+    restart: unless-stopped
+    working_dir: /srv/server
+    tty: true
+    volumes:
+      - ./server:/srv/server
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-server.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-server.loadbalancer.server.port=80
+    depends_on:
+      - traefik
+      - mongodb
+  client:
+    image: node:18-alpine
+    restart: unless-stopped
+    working_dir: /srv/client
+    tty: true
+    volumes:
+      - ./client:/srv/client
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-client.rule=Host(`${DOMAIN}`)
+      - traefik.http.services.${COMPOSE_PROJECT_NAME}-client.loadbalancer.server.port=3000
+    depends_on:
+      - traefik
+      - server
+
+volumes:
+  data:

@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+}
+
+.root {
+  width: 100vw;
+  height: 100vh;
+}
+
+.ant-modal-footer .ant-btn-primary {
+  background-color: #1677ff !important;
+}
